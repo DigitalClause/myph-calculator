@@ -9,7 +9,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { Book, Calculator, Info, Beaker, Flask } from "lucide-react";
+import { Book, Calculator, Info, Beaker, FlaskConical } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 export const PhSidebarContent = () => {
