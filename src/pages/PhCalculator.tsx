@@ -29,6 +29,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+import { 
+  SidebarProvider, 
+  Sidebar, 
+  SidebarInset,
+  SidebarTrigger
+} from "@/components/ui/sidebar";
+import { PhSidebarContent } from "@/components/ph/SidebarContent";
 
 const PhCalculator = () => {
   // State for calculation methods
@@ -164,203 +171,229 @@ const PhCalculator = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-4">
-      <Card className="w-full max-w-lg shadow-lg">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl flex items-center justify-center gap-2">
-            <BeakerIcon className="h-6 w-6" />
-            pH Calculator
-          </CardTitle>
-          <CardDescription>
-            Calculate and explore pH values from different inputs
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent className="space-y-6">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          
-          <Tabs defaultValue="hplus" onValueChange={(value) => setCalculationMethod(value as any)}>
-            <TabsList className="grid grid-cols-4 mb-2">
-              <TabsTrigger value="hplus" className="flex items-center gap-1">
-                <Droplet className="h-4 w-4" />
-                <span className="hidden sm:inline">[H⁺]</span>
-              </TabsTrigger>
-              <TabsTrigger value="oh" className="flex items-center gap-1">
-                <DropletIcon className="h-4 w-4" />
-                <span className="hidden sm:inline">[OH⁻]</span>
-              </TabsTrigger>
-              <TabsTrigger value="poh" className="flex items-center gap-1">
-                <Lightbulb className="h-4 w-4" />
-                <span className="hidden sm:inline">pOH</span>
-              </TabsTrigger>
-              <TabsTrigger value="solution" className="flex items-center gap-1">
-                <FlaskConical className="h-4 w-4" />
-                <span className="hidden sm:inline">Solutions</span>
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="hplus" className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="hplus-concentration" className="text-sm font-medium flex items-center gap-1">
-                  <Droplet className="h-4 w-4" />
-                  Hydrogen Ion Concentration [H⁺] (mol/L)
-                </label>
-                <Input
-                  id="hplus-concentration"
-                  value={hydrogenConcentration}
-                  onChange={(e) => setHydrogenConcentration(e.target.value)}
-                  className="text-right"
-                />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="oh" className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="oh-concentration" className="text-sm font-medium flex items-center gap-1">
-                  <DropletIcon className="h-4 w-4" />
-                  Hydroxide Ion Concentration [OH⁻] (mol/L)
-                </label>
-                <Input
-                  id="oh-concentration"
-                  value={hydroxideConcentration}
-                  onChange={(e) => setHydroxideConcentration(e.target.value)}
-                  className="text-right"
-                />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="poh" className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="poh-value" className="text-sm font-medium flex items-center gap-1">
-                  <Lightbulb className="h-4 w-4" />
-                  pOH Value (0-14)
-                </label>
-                <Input
-                  id="poh-value"
-                  value={pOHValue}
-                  onChange={(e) => setPOHValue(e.target.value)}
-                  className="text-right"
-                />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="solution" className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="solution-select" className="text-sm font-medium flex items-center gap-1">
-                  <FlaskConical className="h-4 w-4" />
-                  Common Acids and Bases
-                </label>
-                <Select value={selectedSolution} onValueChange={handleSolutionSelect}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a solution" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Choose a solution</SelectItem>
-                    {commonSolutions.map((solution) => (
-                      <SelectItem key={solution.name} value={solution.name}>
-                        {solution.name} (pH {solution.typicalPH})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {selectedSolution && (
-                <div className="space-y-2 pt-2">
-                  <Textarea 
-                    placeholder="Notes about this solution..." 
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="h-20"
-                  />
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-          
-          {calculationMethod !== "solution" && (
-            <Button 
-              onClick={handleCalculate} 
-              className="w-full"
-            >
-              Calculate pH
-            </Button>
-          )}
-          
-          <div className="pt-4">
-            <div className="flex justify-between mb-1">
-              <span className="text-sm font-medium">pH Value: {phValue.toFixed(2)}</span>
-              <span className="text-sm font-medium">pOH: {(14 - phValue).toFixed(2)}</span>
-            </div>
-            
-            <Slider
-              value={[phValue]}
-              min={0}
-              max={14}
-              step={0.1}
-              onValueChange={handleSliderChange}
-              className="mt-2"
-            />
-            
-            <div className="flex justify-between mt-1 text-xs text-muted-foreground">
-              <span>Acidic (0)</span>
-              <span>Neutral (7)</span>
-              <span>Basic (14)</span>
-            </div>
-            
-            <Progress value={(phValue / 14) * 100} className="h-2 mt-2" />
-          </div>
-          
-          <div 
-            className="mt-6 p-8 rounded-md flex items-center justify-center text-4xl font-bold"
-            style={{ 
-              backgroundColor: getPhColor(phValue),
-              color: phValue < 3 || phValue > 11 ? 'white' : 'black',
-              transition: 'background-color 0.3s ease'
-            }}
-          >
-            {phValue.toFixed(2)}
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+      <SidebarProvider defaultOpen={true}>
+        <div className="flex min-h-screen w-full">
+          <Sidebar>
+            <PhSidebarContent />
+          </Sidebar>
 
-          <div className="space-y-2 text-center">
-            <div className="text-lg font-medium">
-              {phValue < 7 ? (
-                <span className="text-red-500">Acidic</span>
-              ) : phValue > 7 ? (
-                <span className="text-blue-500">Basic (Alkaline)</span>
-              ) : (
-                <span className="text-green-500">Neutral</span>
-              )}
+          <SidebarInset className="p-4 md:p-6 flex items-center justify-center">
+            <div className="w-full max-w-lg">
+              <div className="flex items-center mb-4">
+                <SidebarTrigger className="mr-2" />
+                <h1 className="text-2xl font-bold flex items-center gap-2">
+                  <BeakerIcon className="h-6 w-6 text-blue-600" />
+                  pH Calculator
+                </h1>
+              </div>
+
+              <Card className="w-full shadow-lg border-blue-100">
+                <CardHeader className="text-center bg-gradient-to-r from-blue-50 to-purple-50 rounded-t-lg">
+                  <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                    <BeakerIcon className="h-6 w-6 text-blue-600" />
+                    pH Calculator
+                  </CardTitle>
+                  <CardDescription>
+                    Calculate and explore pH values from different inputs
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent className="space-y-6 pt-6">
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  <Tabs defaultValue="hplus" onValueChange={(value) => setCalculationMethod(value as any)} className="w-full">
+                    <TabsList className="grid grid-cols-4 mb-2 w-full">
+                      <TabsTrigger value="hplus" className="flex items-center gap-1">
+                        <Droplet className="h-4 w-4" />
+                        <span className="hidden sm:inline">[H⁺]</span>
+                      </TabsTrigger>
+                      <TabsTrigger value="oh" className="flex items-center gap-1">
+                        <DropletIcon className="h-4 w-4" />
+                        <span className="hidden sm:inline">[OH⁻]</span>
+                      </TabsTrigger>
+                      <TabsTrigger value="poh" className="flex items-center gap-1">
+                        <Lightbulb className="h-4 w-4" />
+                        <span className="hidden sm:inline">pOH</span>
+                      </TabsTrigger>
+                      <TabsTrigger value="solution" className="flex items-center gap-1">
+                        <FlaskConical className="h-4 w-4" />
+                        <span className="hidden sm:inline">Solutions</span>
+                      </TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="hplus" className="space-y-4">
+                      <div className="space-y-2">
+                        <label htmlFor="hplus-concentration" className="text-sm font-medium flex items-center gap-1">
+                          <Droplet className="h-4 w-4" />
+                          Hydrogen Ion Concentration [H⁺] (mol/L)
+                        </label>
+                        <Input
+                          id="hplus-concentration"
+                          value={hydrogenConcentration}
+                          onChange={(e) => setHydrogenConcentration(e.target.value)}
+                          className="text-right"
+                        />
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="oh" className="space-y-4">
+                      <div className="space-y-2">
+                        <label htmlFor="oh-concentration" className="text-sm font-medium flex items-center gap-1">
+                          <DropletIcon className="h-4 w-4" />
+                          Hydroxide Ion Concentration [OH⁻] (mol/L)
+                        </label>
+                        <Input
+                          id="oh-concentration"
+                          value={hydroxideConcentration}
+                          onChange={(e) => setHydroxideConcentration(e.target.value)}
+                          className="text-right"
+                        />
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="poh" className="space-y-4">
+                      <div className="space-y-2">
+                        <label htmlFor="poh-value" className="text-sm font-medium flex items-center gap-1">
+                          <Lightbulb className="h-4 w-4" />
+                          pOH Value (0-14)
+                        </label>
+                        <Input
+                          id="poh-value"
+                          value={pOHValue}
+                          onChange={(e) => setPOHValue(e.target.value)}
+                          className="text-right"
+                        />
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="solution" className="space-y-4">
+                      <div className="space-y-2">
+                        <label htmlFor="solution-select" className="text-sm font-medium flex items-center gap-1">
+                          <FlaskConical className="h-4 w-4" />
+                          Common Acids and Bases
+                        </label>
+                        <Select value={selectedSolution} onValueChange={handleSolutionSelect}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a solution" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="placeholder">Choose a solution</SelectItem>
+                            {commonSolutions.map((solution) => (
+                              <SelectItem key={solution.name} value={solution.name}>
+                                {solution.name} (pH {solution.typicalPH})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      {selectedSolution && (
+                        <div className="space-y-2 pt-2">
+                          <Textarea 
+                            placeholder="Notes about this solution..." 
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            className="h-20"
+                          />
+                        </div>
+                      )}
+                    </TabsContent>
+                  </Tabs>
+                  
+                  {calculationMethod !== "solution" && (
+                    <Button 
+                      onClick={handleCalculate} 
+                      className="w-full bg-blue-600 hover:bg-blue-700"
+                    >
+                      Calculate pH
+                    </Button>
+                  )}
+                  
+                  <div className="pt-4">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium">pH Value: {phValue.toFixed(2)}</span>
+                      <span className="text-sm font-medium">pOH: {(14 - phValue).toFixed(2)}</span>
+                    </div>
+                    
+                    <Slider
+                      value={[phValue]}
+                      min={0}
+                      max={14}
+                      step={0.1}
+                      onValueChange={handleSliderChange}
+                      className="mt-2"
+                    />
+                    
+                    <div className="flex justify-between mt-1 text-xs text-muted-foreground">
+                      <span>Acidic (0)</span>
+                      <span>Neutral (7)</span>
+                      <span>Basic (14)</span>
+                    </div>
+                    
+                    <Progress 
+                      value={(phValue / 14) * 100} 
+                      className="h-2 mt-2" 
+                      style={{ 
+                        background: 'linear-gradient(to right, #ff5050, #ffcc00, #50c878)' 
+                      }}
+                    />
+                  </div>
+                  
+                  <div 
+                    className="mt-6 p-8 rounded-md flex items-center justify-center text-4xl font-bold transition-all duration-300 shadow-inner"
+                    style={{ 
+                      backgroundColor: getPhColor(phValue),
+                      color: phValue < 3 || phValue > 11 ? 'white' : 'black',
+                      transform: 'scale(1.02)'
+                    }}
+                  >
+                    {phValue.toFixed(2)}
+                  </div>
+
+                  <div className="space-y-2 text-center">
+                    <div className="text-lg font-medium">
+                      {phValue < 7 ? (
+                        <span className="text-red-500">Acidic</span>
+                      ) : phValue > 7 ? (
+                        <span className="text-blue-500">Basic (Alkaline)</span>
+                      ) : (
+                        <span className="text-green-500">Neutral</span>
+                      )}
+                    </div>
+                    
+                    <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
+                      <Info className="h-4 w-4" />
+                      {phValue < 7 ? (
+                        <span>[H⁺] {'>'} [OH⁻]</span>
+                      ) : phValue > 7 ? (
+                        <span>[OH⁻] {'>'} [H⁺]</span>
+                      ) : (
+                        <span>[H⁺] = [OH⁻]</span>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+                
+                <CardFooter className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-b-lg">
+                  <Button 
+                    variant="outline" 
+                    onClick={handleReset} 
+                    className="w-full flex gap-2 border-blue-200"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Reset Calculator
+                  </Button>
+                </CardFooter>
+              </Card>
             </div>
-            
-            <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
-              <Info className="h-4 w-4" />
-              {phValue < 7 ? (
-                <span>[H⁺] {'>'} [OH⁻]</span>
-              ) : phValue > 7 ? (
-                <span>[OH⁻] {'>'} [H⁺]</span>
-              ) : (
-                <span>[H⁺] = [OH⁻]</span>
-              )}
-            </div>
-          </div>
-        </CardContent>
-        
-        <CardFooter>
-          <Button 
-            variant="outline" 
-            onClick={handleReset} 
-            className="w-full flex gap-2"
-          >
-            <RefreshCw className="h-4 w-4" />
-            Reset Calculator
-          </Button>
-        </CardFooter>
-      </Card>
+          </SidebarInset>
+        </div>
+      </SidebarProvider>
     </div>
   );
 };
