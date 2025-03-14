@@ -18,7 +18,7 @@ import {
   BeakerIcon, 
   RefreshCw, 
   Beaker,
-  Drop,
+  Droplet,
   DropletIcon, 
   FlaskConical, 
   Lightbulb, 
@@ -186,7 +186,7 @@ const PhCalculator = () => {
           <Tabs defaultValue="hplus" onValueChange={(value) => setCalculationMethod(value as any)}>
             <TabsList className="grid grid-cols-4 mb-2">
               <TabsTrigger value="hplus" className="flex items-center gap-1">
-                <Drop className="h-4 w-4" />
+                <Droplet className="h-4 w-4" />
                 <span className="hidden sm:inline">[H⁺]</span>
               </TabsTrigger>
               <TabsTrigger value="oh" className="flex items-center gap-1">
@@ -206,7 +206,7 @@ const PhCalculator = () => {
             <TabsContent value="hplus" className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="hplus-concentration" className="text-sm font-medium flex items-center gap-1">
-                  <Drop className="h-4 w-4" />
+                  <Droplet className="h-4 w-4" />
                   Hydrogen Ion Concentration [H⁺] (mol/L)
                 </label>
                 <Input
@@ -340,9 +340,9 @@ const PhCalculator = () => {
             <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
               <Info className="h-4 w-4" />
               {phValue < 7 ? (
-                <span>[H⁺] > [OH⁻]</span>
+                <span>[H⁺] {'>'} [OH⁻]</span>
               ) : phValue > 7 ? (
-                <span>[OH⁻] > [H⁺]</span>
+                <span>[OH⁻] {'>'} [H⁺]</span>
               ) : (
                 <span>[H⁺] = [OH⁻]</span>
               )}
